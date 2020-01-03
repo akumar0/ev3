@@ -36,7 +36,7 @@ def showImage(camera, pic):
         pic = 'temppic.jpg'
     camera.capture(pic)
     imgshow = subprocess.Popen(["gpicview", pic])
-    time.sleep(5)
+    time.sleep(2)
     imgshow.kill()
 
 def setup():
