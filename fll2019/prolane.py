@@ -29,13 +29,11 @@ timeOut = MAX_DISTANCE*60   #calculate timeout according to the maximum measured
                             #                                     cm->m   sound_speed    s->microsecond
 VEHICLE_DIST = 7
 
-camera = None
 segmentDisplay = SevenSegmentDisplay()
 
-def showImage(pic):
+def showImage(camera, pic):
     if (pic == None):
         pic = 'temppic.jpg'
-
     camera.capture(pic)
     imgshow = subprocess.Popen(["gpicview", pic])
     time.sleep(5)
@@ -45,13 +43,13 @@ def setup():
     print ('Program is starting...')
     GPIO.setmode(GPIO.BOARD)       # Numbers GPIOs by physical location
     GPIO.setup(ledPin, GPIO.OUT)   # Set ledPin's mode is output
-    GPIO.setup(buttonPin, GPIO.IN, pull_up_down=GPIO.PUD_UP)    # Set buttonPin's mode is input, and pull up to high level(3.3V)
+    #GPIO.setup(buttonPin, GPIO.IN, pull_up_down=GPIO.PUD_UP)    # Set buttonPin's mode is input, and pull up to high level(3.3V)
     GPIO.setup(trigPin1, GPIO.OUT)   #
     GPIO.setup(echoPin1, GPIO.IN)    #
     GPIO.setup(trigPin2, GPIO.OUT)   #
     GPIO.setup(echoPin2, GPIO.IN)    #
-    camera = picamera.PiCamera()
     segmentDisplay.setup()
+    print("setup complete")
 
 def destroy():
     GPIO.output(ledPin, GPIO.LOW)     # led off
@@ -60,6 +58,10 @@ def destroy():
 def pulseIn(pin,level,timeOut): # function pulseIn: obtain pulse time of a pin
     t0 = time.time()
     while(GPIO.input(pin) != level):
+        if((time.time() - t0) > timeOut*0.000001):
+            return 0;
+    t0 = time.time()
+    while(GPIO.input(pin) == level):
         if((time.time() - t0) > timeOut*0.000001):
             return 0;
     pulseTime = (time.time() - t0)*1000000
@@ -82,7 +84,7 @@ def testButton():
 			GPIO.output(ledPin,GPIO.LOW)
 			print ('led off ...')	
 
-def reportDetection(isViolation):
+def reportDetection(camera, isViolation):
     # Light up the LED
     GPIO.output(ledPin,GPIO.HIGH)
     if (isViolation):
@@ -93,12 +95,13 @@ def reportDetection(isViolation):
 
     # Show V on the violation if violation else print B for bus
     # Take a picture and show on the screen
-    showImage('prox.jpg')
+    showImage(camera, 'prox.jpg')
 
 def clearDisplay():
     GPIO.output(ledPin,GPIO.LOW)
 
 def loop():
+    camera = picamera.PiCamera()
     farMode = True
     clearDisplay()
     while True:
@@ -111,9 +114,9 @@ def loop():
             if (distance1 < VEHICLE_DIST):
                 print("detected object at distance1=" + str(distance1))
                 # is a bus so not a violation
-                reportDetection(False)
+                reportDetection(camera, False)
             else:
-                reportDetection(True)
+                reportDetection(camera, True)
         else:
             if (not farMode):
                 print("Vehicle is gone. Monitoring again.")
