@@ -107,7 +107,7 @@ def loop():
     while True:
         # check ultrasonic sensor to detect vehicle
         distance = getSonar(trigPin1, echoPin1)
-        if (distance < VEHICLE_DIST) and farMode:
+        if (distance < VEHICLE_DIST) and (distance > 1) and farMode:
             print("detected object at distance=" + str(distance))
             farMode = False
             distance1 = getSonar(trigPin2, echoPin2)
