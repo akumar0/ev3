@@ -34,7 +34,7 @@ class SevenSegmentDisplay:
 
     def showDigit(self, i):
         GPIO.output(self.latchPin, GPIO.LOW)
-        shiftOut(self.dataPin, self.clockPin, self.MSBFIRST, self.num[i])#Output the figures and the highest level is transfered preferentially.
+        self.shiftOut(self.dataPin, self.clockPin, self.MSBFIRST, self.num[i])#Output the figures and the highest level is transfered preferentially.
         GPIO.output(self.latchPin, GPIO.HIGH)
 
     def loop(self):
