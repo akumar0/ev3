@@ -120,7 +120,7 @@ def loop():
                 print("not detected object")
                 reportDetection(camera, True)
         elif (distance1 >= VEHICLE_DIST) and not farMode:
-            print("Vehicle is gone. Monitoring again.")
+            print("Vehicle is gone. Monitoring again. distance1=" + str(distance1))
             clearDisplay()
             farMode = True
 
