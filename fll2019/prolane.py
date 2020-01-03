@@ -27,7 +27,7 @@ MAX_DISTANCE = 100          #define the maximum measured distance in cm
 timeOut = MAX_DISTANCE*60   #calculate timeout according to the maximum measured distance
                             # this is in micro seconds. factor = (1/100) * (1/340)    * 10^6  ~=60
                             #                                     cm->m   sound_speed    s->microsecond
-VEHICLE_DIST = 7
+VEHICLE_DIST = 10
 
 segmentDisplay = SevenSegmentDisplay()
 
@@ -91,6 +91,7 @@ def reportDetection(camera, isViolation):
         print("Violation detected!")
         segmentDisplay.showDigit(1)
     else:
+        print("No violation detected!")
         segmentDisplay.showDigit(0)
 
     # Show V on the violation if violation else print B for bus
@@ -106,19 +107,19 @@ def loop():
     clearDisplay()
     while True:
         # check ultrasonic sensor to detect vehicle
-        distance = getSonar(trigPin1, echoPin1)
-        if (distance < VEHICLE_DIST) and (distance > 1) and farMode:
-            print("detected object at distance=" + str(distance))
+        distance1 = getSonar(trigPin1, echoPin1)
+        if (distance1 < VEHICLE_DIST) and (distance1 > 1) and farMode:
+            print("detected object at distance1=" + str(distance1))
             farMode = False
-            distance1 = getSonar(trigPin2, echoPin2)
-            if (distance1 < VEHICLE_DIST):
-                print("detected object at distance1=" + str(distance1))
+            distance2 = getSonar(trigPin2, echoPin2)
+            if ((distance2 < VEHICLE_DIST) and (distance2 > 1)):
+                print("detected object at distance2=" + str(distance2))
                 # is a bus so not a violation
                 reportDetection(camera, False)
             else:
                 print("not detected object")
                 reportDetection(camera, True)
-        elif (distance >= VEHICLE_DIST) and not farMode:
+        elif (distance1 >= VEHICLE_DIST) and not farMode:
             print("Vehicle is gone. Monitoring again.")
             clearDisplay()
             farMode = True
