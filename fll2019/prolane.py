@@ -48,6 +48,8 @@ def setup():
     GPIO.setup(buttonPin, GPIO.IN, pull_up_down=GPIO.PUD_UP)    # Set buttonPin's mode is input, and pull up to high level(3.3V)
     GPIO.setup(trigPin1, GPIO.OUT)   #
     GPIO.setup(echoPin1, GPIO.IN)    #
+    GPIO.setup(trigPin2, GPIO.OUT)   #
+    GPIO.setup(echoPin2, GPIO.IN)    #
     camera = picamera.PiCamera()
     segmentDisplay.setup()
 
@@ -103,9 +105,11 @@ def loop():
         # check ultrasonic sensor to detect vehicle
         distance = getSonar(trigPin1, echoPin1)
         if (distance < VEHICLE_DIST) and farMode:
+            print("detected object at distance=" + str(distance))
             farMode = False
             distance1 = getSonar(trigPin2, echoPin2)
             if (distance1 < VEHICLE_DIST):
+                print("detected object at distance1=" + str(distance1))
                 # is a bus so not a violation
                 reportDetection(False)
             else:
