@@ -27,7 +27,7 @@ MAX_DISTANCE = 100          #define the maximum measured distance in cm
 timeOut = MAX_DISTANCE*60   #calculate timeout according to the maximum measured distance
                             # this is in micro seconds. factor = (1/100) * (1/340)    * 10^6  ~=60
                             #                                     cm->m   sound_speed    s->microsecond
-VEHICLE_DIST = 10
+VEHICLE_DIST = 7
 
 segmentDisplay = SevenSegmentDisplay()
 
