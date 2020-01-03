@@ -91,7 +91,7 @@ def reportDetection(camera, isViolation):
         print("Violation detected!")
         segmentDisplay.showDigit(1)
     else:
-        segmentDisplay.shiftDigit(0)
+        segmentDisplay.showDigit(0)
 
     # Show V on the violation if violation else print B for bus
     # Take a picture and show on the screen
@@ -116,11 +116,11 @@ def loop():
                 # is a bus so not a violation
                 reportDetection(camera, False)
             else:
+                print("not detected object")
                 reportDetection(camera, True)
-        else:
-            if (not farMode):
-                print("Vehicle is gone. Monitoring again.")
-                clearDisplay()
+        elif (distance >= VEHICLE_DIST) and not farMode:
+            print("Vehicle is gone. Monitoring again.")
+            clearDisplay()
             farMode = True
 
 if __name__ == '__main__':     # Program start from here
