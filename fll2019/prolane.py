@@ -9,7 +9,7 @@ import RPi.GPIO as GPIO
 import time
 import picamera
 import subprocess
-from .SevenSegmentDisplay import SevenSegmentDisplay
+from SevenSegmentDisplay import SevenSegmentDisplay
 
 ''' Sensors used:
     ultrasonic sensor for distance
