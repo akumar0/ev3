@@ -7,6 +7,9 @@
 ########################################################################
 import RPi.GPIO as GPIO
 import time
+import picamera
+import subprocess
+from .SevenSegmentDisplay import SevenSegmentDisplay
 
 ''' Sensors used:
     ultrasonic sensor for distance
@@ -14,17 +17,29 @@ import time
     button(s) for monitoring press
     rfid for detecting valid vehicles
 '''
-ledPin = 11    # define the ledPin
+ledPin = 11    # define the ledPin GPIO17
 buttonPin = 12    # define the buttonPin
-trigPin1 = 16
-echoPin1 = 18
-trigPin2 = 16
-echoPin2 = 18
-MAX_DISTANCE = 100          #define the maximum measured distance
+trigPin1 = 16 #GPIO23
+echoPin1 = 18  #GPIO24
+trigPin2 = 13 #GPIO27
+echoPin2 = 15 #GPIO22
+MAX_DISTANCE = 100          #define the maximum measured distance in cm
 timeOut = MAX_DISTANCE*60   #calculate timeout according to the maximum measured distance
                             # this is in micro seconds. factor = (1/100) * (1/340)    * 10^6  ~=60
                             #                                     cm->m   sound_speed    s->microsecond
 VEHICLE_DIST = 7
+
+camera = None
+segmentDisplay = SevenSegmentDisplay()
+
+def showImage(pic):
+    if (pic == None):
+        pic = 'temppic.jpg'
+
+    camera.capture(pic)
+    imgshow = subprocess.Popen(["gpicview", pic])
+    time.sleep(5)
+    imgshow.kill()
 
 def setup():
     print ('Program is starting...')
@@ -33,6 +48,12 @@ def setup():
     GPIO.setup(buttonPin, GPIO.IN, pull_up_down=GPIO.PUD_UP)    # Set buttonPin's mode is input, and pull up to high level(3.3V)
     GPIO.setup(trigPin1, GPIO.OUT)   #
     GPIO.setup(echoPin1, GPIO.IN)    #
+    camera = picamera.PiCamera()
+    segmentDisplay.setup()
+
+def destroy():
+    GPIO.output(ledPin, GPIO.LOW)     # led off
+    GPIO.cleanup()         #release resource
 
 def pulseIn(pin,level,timeOut): # function pulseIn: obtain pulse time of a pin
     t0 = time.time()
@@ -62,21 +83,27 @@ def testButton():
 def reportDetection(isViolation):
     # Light up the LED
     GPIO.output(ledPin,GPIO.HIGH)
+    if (isViolation):
+        print("Violation detected!")
+        segmentDisplay.showDigit(1)
+    else:
+        segmentDisplay.shiftDigit(0)
 
     # Show V on the violation if violation else print B for bus
-
     # Take a picture and show on the screen
-
-    return
+    showImage('prox.jpg')
 
 def clearDisplay():
-    return
+    GPIO.output(ledPin,GPIO.LOW)
 
 def loop():
+    farMode = True
+    clearDisplay()
     while True:
         # check ultrasonic sensor to detect vehicle
         distance = getSonar(trigPin1, echoPin1)
-        if (distance < VEHICLE_DIST):
+        if (distance < VEHICLE_DIST) and farMode:
+            farMode = False
             distance1 = getSonar(trigPin2, echoPin2)
             if (distance1 < VEHICLE_DIST):
                 # is a bus so not a violation
@@ -84,7 +111,10 @@ def loop():
             else:
                 reportDetection(True)
         else:
-            clearDisplay()
+            if (not farMode):
+                print("Vehicle is gone. Monitoring again.")
+                clearDisplay()
+            farMode = True
 
 if __name__ == '__main__':     # Program start from here
 	setup()
