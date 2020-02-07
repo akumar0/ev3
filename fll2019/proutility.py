@@ -13,7 +13,7 @@ def showImage(camera, pic):
         pic = 'temppic.jpg'
     camera.capture(pic)
     imgshow = subprocess.Popen(["gpicview", pic])
-    time.sleep(2)
+    time.sleep(5)
     imgshow.kill()
 
 def pulseIn(pin,level,timeOut): # function pulseIn: obtain pulse time of a pin

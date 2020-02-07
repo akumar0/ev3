@@ -14,11 +14,10 @@ from SevenSegmentDisplay import SevenSegmentDisplay
 ''' Sensors used:
     ultrasonic sensor for distance
     led for lighting up
-    button(s) for monitoring press
-    rfid for detecting valid vehicles
 '''
 ledPin = 11    # define the ledPin GPIO17
-buttonPin = 12    # define the buttonPin
+buttonPin = 12    # define the buttonPinebtfdvhcrnigkigcubctjjkrunjihcbb
+
 trigPin1 = 16 #GPIO23
 echoPin1 = 18  #GPIO24
 trigPin2 = 13 #GPIO27
@@ -61,21 +60,27 @@ def clearDisplay():
     GPIO.output(ledPin,GPIO.LOW)
 
 def loop():
+    # access the camera
     camera = picamera.PiCamera()
     farMode = True
     clearDisplay()
     while True:
         # check ultrasonic sensor to detect vehicle
+        # getSonar function is used to get the distance 
         distance1 = getSonar(trigPin1, echoPin1)
+
         if (distance1 < VEHICLE_DIST) and (distance1 > 1) and farMode:
             print("detected object at distance1=" + str(distance1))
             farMode = False
+            # Second sensor tells us if the vehicle is long or short
             distance2 = getSonar(trigPin2, echoPin2)
+            # 
             if ((distance2 < VEHICLE_DIST) and (distance2 > 1)):
                 print("detected object at distance2=" + str(distance2))
                 # is a bus so not a violation
                 reportDetection(camera, False)
             else:
+                # is a car so a violation
                 print("not detected object")
                 reportDetection(camera, True)
         elif (distance1 >= VEHICLE_DIST) and not farMode:
