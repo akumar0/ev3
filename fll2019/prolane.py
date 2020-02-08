@@ -22,7 +22,7 @@ trigPin1 = 16 #GPIO23
 echoPin1 = 18  #GPIO24
 trigPin2 = 13 #GPIO27
 echoPin2 = 15 #GPIO22
-VEHICLE_DIST = 7
+VEHICLE_DIST = 15
 
 segmentDisplay = SevenSegmentDisplay()
 
