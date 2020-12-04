@@ -23,4 +23,6 @@ if (username == passwordRev):
 else:
     print("<p>Invalid username/password")
 
+print("<p><a href=\"/\"/> click here to go back</a>")
+
 print("</body>")

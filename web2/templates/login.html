@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Login Page</title>
+<title>Main Page</title>
 
 <style>
     /* Bordered form */
@@ -76,16 +76,16 @@ span.psw {
   }
 }
 </style>
-<script defer src="login-page.js"></script>
+
 </head>
 <body>
 
 <h1>Welcome to the fitness page!</h1>
 <!-- p>This is a paragraph.</p -->
 
-<form id="login-form">
+<form action="/login" method="post">
     <div class="imgcontainer">
-      <img src="fitness_image.jpg" alt="Fitness" class="avatar">
+      <img src="/static/fitness_image.jpg" alt="Fitness" class="avatar">
     </div>
   
     <div class="container">
@@ -95,7 +95,7 @@ span.psw {
       <label for="psw"><b>Password</b></label>
       <input type="password" placeholder="Enter Password" name="password" required>
   
-      <input type="submit" value="Login" id="login-form-submit">
+      <button type="submit">Login</button>
       <label>
         <input type="checkbox" checked="checked" name="remember"> Remember me
       </label>
